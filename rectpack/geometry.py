@@ -251,37 +251,26 @@ class Rectangle(object):
 
     def intersects(self, rect, edges=False):
         """
-        Detect intersections between this rectangle and rect.
+        Detect intersections between this and another Rectangle.
 
-        Args:
-            rect (Rectangle): Rectangle to test for intersections.
-            edges (bool): Accept edge touching rectangles as intersects or not
+        Parameters:
+            rect (Rectangle): The other rectangle.
+            edges (bool): True to consider rectangles touching by their
+                edges or corners to be intersecting.
+                (Should have been named include_touching)
 
         Returns:
             bool: True if the rectangles intersect, False otherwise
         """
-        # Not even touching
-        if (self.bottom > rect.top or \
-            self.top < rect.bottom or \
-            self.left > rect.right or \
-            self.right < rect.left):
-            return False
-      
-        # Discard edge intersects
-        if not edges:
-            if (self.bottom == rect.top or \
-                self.top == rect.bottom or \
-                self.left == rect.right or \
-                self.right == rect.left):
+        if edges:
+            if (self.bottom > rect.top or self.top < rect.bottom or\
+                self.left > rect.right or self.right < rect.left):
+                return False
+        else:
+            if (self.bottom >= rect.top or self.top <= rect.bottom or
+                self.left >= rect.right or self.right <= rect.left):
                 return False
 
-        # Discard corner intersects 
-        if (self.left == rect.right and self.bottom == rect.top or \
-            self.left == rect.right and rect.bottom == self.top or \
-            rect.left == self.right and self.bottom == rect.top or \
-            rect.left == self.right and rect.bottom == self.top):
-            return False
-    
         return True
 
     def intersection(self, rect, edges=False):
@@ -293,8 +282,9 @@ class Rectangle(object):
         
         Arguments:
              rect (Rectangle): The other rectangle.
-             edges (bool): If true touching edges are considered an intersection, and
-             a rectangle of 0 height or width will be returned
+             edges (bool): If True Rectangles touching by their edges are 
+                considered to be intersection. In this case a rectangle of 
+                0 height or/and width will be returned.
 
         Returns:
             Rectangle: Intersection.
